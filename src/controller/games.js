@@ -1,10 +1,9 @@
 import db from '../config/db.js'
 //import dayjs from 'dayjs'
-//import { ObjectId } from "mongodb"
+import { ObjectId } from "mongodb"
 
 //let data = dayjs().format("DD/MM")
 
-//------------------------HOME-----------------------------------
 export async function  getGames(req, res) {
     console.log("Rodou Get games")
   
@@ -17,4 +16,23 @@ export async function  getGames(req, res) {
     } else {
         res.sendStatus(404)
     }
+}
+
+export async function getGameId(req, res) {
+    console.log("Rodou GET game id")
+    const { id } = req.params;
+
+    try {	
+      const game = await db.collection("games").findOne({ _id: (ObjectId(id)) })
+
+      if (!game) return res.status(404).send("Jogo não encontrado")
+
+      if (game) {
+        res.send(game).status(200)
+      }
+      } catch (error) {
+        res.status(500).send(error)
+      }
+
+
 }
