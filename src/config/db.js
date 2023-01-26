@@ -1,18 +1,17 @@
-import { MongoClient } from "mongodb";
+import { MongoClient } from 'mongodb'
 import dotenv from 'dotenv'
 
-let db
 dotenv.config()
 
-const mongoClient = new MongoClient(process.env.DATABASE_URL)
+const mongoClient = new MongoClient("mongodb://127.0.0.1:27017/laggames")
+let db;
 
 try {
-    await mongoClient.connect()
-    db = mongoClient.db()
-    
+  await mongoClient.connect()
+  db = mongoClient.db()
+  console.log('Banco conectado!')
 } catch (error) {
-    console.log(error)
-
+  console.log('Erro no server')
 }
 
 export default db
