@@ -33,7 +33,7 @@ export async function login(req, res) {
 
         try {
             await db.collection('sessions').insertOne({
-                idUsuario: usuario._id,
+                userId: usuario._id,
                 token
             })
             res.send(token)
