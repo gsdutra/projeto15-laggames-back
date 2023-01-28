@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const mongoClient = new MongoClient("mongodb://127.0.0.1:27017/laggames")
+const mongoClient = new MongoClient(process.env.DATABASE_URL)
 let db;
 
 try {
