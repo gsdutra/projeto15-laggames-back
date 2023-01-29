@@ -1,95 +1,54 @@
 import db from '../config/db.js'
-//import dayjs from 'dayjs'
 import { ObjectId } from "mongodb"
 
 export async function getUserProducts(req,res){
-
-	// db.collection("sessions").deleteMany({})
-
 	const session = res.locals.sessao
 	const userId = session.userId
 
-	//console.log("Rodou getUserProducts")
-
-	//hypotheticalUserId
-	//const userId = "63d40c8ad967b40c2b1a8a5b" //Obter com o token
-
 	try{
 		const userProducts = await db.collection("sessions").findOne({_id: ObjectId(userId)});
-
 		const productIdsArray = userProducts.userProducts
-
 		let items = []
-
 		let total = 0;
 
 		for (let i = 0; i < productIdsArray.length; i++) {
-
-			const product = await db.collection("games").findOne({_id: ObjectId(productIdsArray[i].productId)})
-
-			//items.push(product)
+			const product = await db.collection("games").findOne({_id: ObjectId(productIdsArray[i].productId)})			
 
 			items.push({
-
 				productId: productIdsArray[i].productId,
-
 				ammount: productIdsArray[i].ammount,
-
 				productName: product.title,
-
 				unitaryPrice: product.value,
-
 				productImage: product.cape,
-
 				totalPrice: Number(product.value)*Number(productIdsArray[i].ammount)
-
 			})
 
 			total += Number(product.value)*Number(productIdsArray[i].ammount)
 		}
 
-		res.status(200).send({items, total})
+		return res.status(200).send({items, total})
 	}
 	catch{
-		res.status(200).send("Carrinho vazio")
+		return res.status(200).send("Carrinho vazio")
 	}
 }
 
 export async function postUserProducts(req,res){
-	//const userId = req.body.userId
-	//hypotheticalUserId
-	//const userId = "63d40c8ad967b40c2b1a8a5b" //Obter com o token
-
 	const session = res.locals.sessao
 	const userId = session.userId
-
-	//console.log("Rodou postUserProducts")
-
 	const productId = req.body.product
-	const ammount = req.body.ammount
-
-	//console.log(productId)
+	const ammount = req.body.ammount	
 
 	try{
 		const prom = await db.collection("sessions").findOne({_id: ObjectId(userId)})
-
-		// Não é mais necessário pq já tem Bearer token, mas to deixando aqui caso dê algum bug
-		// if (!prom){
-		// 	db.collection("sessions").insertOne({_id: ObjectId(userId)})
-		// 	console.log("Inseriu")
-		// }
-
 		let productsArray = []
 
-		try {
+		try{
 			productsArray = prom.userProducts
 		} catch {
 		}
 
-		console.log(productsArray)
-
 		const productIndexIfAlreadyExists = productsArray.findIndex(e=>e.productId === productId)
-
 		if (productIndexIfAlreadyExists !== -1){
 			productsArray[productIndexIfAlreadyExists].ammount++
 		}else{
@@ -97,31 +56,20 @@ export async function postUserProducts(req,res){
 		}
 
 		const test = await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}}, {upsert: true})
-
-		console.log(test)
-
-		res.sendStatus(200)
+		return res.sendStatus(200)
 	}
 	catch{
-		res.sendStatus(500)
+		return res.sendStatus(500)
 	}
 }
 
 export async function deleteUserProducts(req, res){
-
 	try{
-
 		const session = res.locals.sessao
-		const userId = session.userId
-	
+		const userId = session.userId	
 		const productId = req.params.productId
-
-		console.log(productId)
-
 		const prom = await db.collection("sessions").findOne({_id: ObjectId(userId)})
-
 		let productsArray = prom.userProducts
-
 		const productIndex = productsArray.findIndex(e=>e.productId === productId)
 
 		if (productIndex !== -1){
@@ -129,8 +77,7 @@ export async function deleteUserProducts(req, res){
 		}
 
 		await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}})
-
-		res.sendStatus(200)
+		return res.sendStatus(200)
 
 	}catch{
 		return res.sendStatus(500)
@@ -140,14 +87,11 @@ export async function deleteUserProducts(req, res){
 export async function putUserProducts(req, res){
 	const session = res.locals.sessao
 	const userId = session.userId
-
 	const productId = req.params.productId
 	const ammount = req.body.ammount
 
-
 	try{
 		const prom = await db.collection("sessions").findOne({_id: ObjectId(userId)})
-
 		let productsArray = []
 
 		try {
@@ -157,7 +101,6 @@ export async function putUserProducts(req, res){
 
 		if (ammount < 1){
 			const productIndex = productsArray.findIndex(e=>e.productId === productId)
-
 			productsArray.splice(productIndex,1)
 
 			await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}})
@@ -173,13 +116,11 @@ export async function putUserProducts(req, res){
 			productsArray.push({productId, ammount})
 		}
 
-		const test = await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}}, {upsert: true})
+		const test = await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}}, {upsert: true})		
 
-		//console.log(test)
-
-		res.sendStatus(200)
+		return res.sendStatus(200)
 	}
 	catch{
-		res.sendStatus(500)
+		return res.sendStatus(500)
 	}
 }

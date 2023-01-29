@@ -1,13 +1,14 @@
-import { getGames, getGameId, cadastroGame } from "../controller/games.js"
+import schemaValidation from "../middlewares/schemaValidationMiddleware.js";
+import cadastroGameSchema from "../schema/cadastroGameSchema.js";
+import { getGames, getGameId, cadastroGame, deleteGameId } from "../controller/games.js"
 import { Router } from 'express'
-import { verificaToken } from "../middlewares/verificaToken.js"
+import { verificaToken } from '../middlewares/verificaToken.js'
   
 const GamesRoutes = Router()
 
 GamesRoutes.get("/game/:id", getGameId)
-
-//GamesRoutes.use(verificaToken)
-GamesRoutes.get("/games", getGames)
-GamesRoutes.post("/cadastroGame", cadastroGame)
+GamesRoutes.get("/games", verificaToken, getGames)
+GamesRoutes.delete("/deleteGame/:id", deleteGameId)
+GamesRoutes.post("/cadastroGame", schemaValidation(cadastroGameSchema), cadastroGame)
 
 export default GamesRoutes
