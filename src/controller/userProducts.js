@@ -82,11 +82,9 @@ export async function postUserProducts(req,res){
 		try {
 			productsArray = prom.userProducts
 		} catch {
-			
 		}
 
 		console.log(productsArray)
-		console.log(productId)
 
 		const productIndexIfAlreadyExists = productsArray.findIndex(e=>e.productId === productId)
 
@@ -96,7 +94,9 @@ export async function postUserProducts(req,res){
 			productsArray.push({productId, ammount})
 		}
 
-		await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}})
+		const test = await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}}, {upsert: true})
+
+		console.log(test)
 
 		res.sendStatus(200)
 	}
