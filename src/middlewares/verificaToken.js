@@ -2,10 +2,9 @@ import db from '../config/db.js'
 
 export async function verificaToken(req, res, next) {
    
-    const { Authorization } = req.headers
-    const token = Authorization?.replace("Bearer ", '')
+    const { authorization } = req.headers
+    const token = authorization?.replace("Bearer ", '')
     console.log("rodou token")
-    console.log(Authorization)
 
   if (!token) return res.status(422).send("Informe o token!")
 
