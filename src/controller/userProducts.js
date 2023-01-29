@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb"
 
 export async function getUserProducts(req,res){
 
+	// db.collection("sessions").deleteMany({})
+
 	const session = res.locals.sessao
 	const userId = session.userId
 
@@ -107,7 +109,7 @@ export async function postUserProducts(req,res){
 
 export async function deleteUserProducts(req, res){
 
-	// try{
+	try{
 
 		const session = res.locals.sessao
 		const userId = session.userId
@@ -130,7 +132,54 @@ export async function deleteUserProducts(req, res){
 
 		res.sendStatus(200)
 
-	// }catch{
-	// 	return res.sendStatus(500)
-	// }
+	}catch{
+		return res.sendStatus(500)
+	}
+}
+
+export async function putUserProducts(req, res){
+	const session = res.locals.sessao
+	const userId = session.userId
+
+	const productId = req.params.productId
+	const ammount = req.body.ammount
+
+
+	try{
+		const prom = await db.collection("sessions").findOne({_id: ObjectId(userId)})
+
+		let productsArray = []
+
+		try {
+			productsArray = prom.userProducts
+		} catch {
+		}
+
+		if (ammount < 1){
+			const productIndex = productsArray.findIndex(e=>e.productId === productId)
+
+			productsArray.splice(productIndex,1)
+
+			await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}})
+	
+			return res.sendStatus(200)
+		}
+
+		const productIndexIfAlreadyExists = productsArray.findIndex(e=>e.productId === productId)
+
+		if (productIndexIfAlreadyExists !== -1){
+			productsArray[productIndexIfAlreadyExists].ammount = ammount
+		}else{
+			productsArray.push({productId, ammount})
+		}
+
+		const test = await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}}, {upsert: true})
+
+		//console.log(test)
+
+		res.sendStatus(200)
+	}
+	catch{
+		res.sendStatus(500)
+	}
 }
