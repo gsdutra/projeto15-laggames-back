@@ -2,7 +2,7 @@ import db from '../config/db.js'
 import { ObjectId } from "mongodb"
 
 export async function  getGames(req, res) {
-    console.log("Rodou Get games")
+    //console.log("Rodou Get games")
 
     const { authorization } = req.headers
     const token = authorization?.replace("Bearer ", '')
@@ -29,7 +29,7 @@ export async function  getGames(req, res) {
 }
 
 export async function getGameId(req, res) {
-    console.log("Rodou GET game id")
+    //console.log("Rodou GET game id")
     const { id } = req.params;
 
     try {	
