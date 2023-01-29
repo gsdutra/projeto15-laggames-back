@@ -5,7 +5,7 @@ import { v4 as uuidV4 } from 'uuid'
 //----------------------CADASTRO---------------------------
 export async function cadastro(req, res) {
     console.log("Rodou POST cadastro")
-    const user = req.body;  
+    const user = req.body;
   
     const passwordHash = bcrypt.hashSync(user.senha, 10);
   

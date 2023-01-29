@@ -12,5 +12,5 @@ app.use(cors())
 app.use([gamesRoutes, authRoutes, userProductsRoutes])
 
 app.listen(PORT, () => {
-    console.log('Servidor rodando!')
+    console.log('Servidor rodando na porta '+ PORT)
   })
