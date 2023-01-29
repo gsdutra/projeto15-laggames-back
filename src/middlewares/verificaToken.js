@@ -13,7 +13,9 @@ export async function verificaToken(req, res, next) {
 
     if (!session) return res.status(401).send("Você não tem autorização")    
 
-    res.locals.sessao = session   
+    res.locals.sessao = session
+
+    console.log("Sucesso no token")
 
     next()
 

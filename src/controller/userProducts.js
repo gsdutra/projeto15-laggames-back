@@ -104,3 +104,33 @@ export async function postUserProducts(req,res){
 		res.sendStatus(500)
 	}
 }
+
+export async function deleteUserProducts(req, res){
+
+	// try{
+
+		const session = res.locals.sessao
+		const userId = session.userId
+	
+		const productId = req.params.productId
+
+		console.log(productId)
+
+		const prom = await db.collection("sessions").findOne({_id: ObjectId(userId)})
+
+		let productsArray = prom.userProducts
+
+		const productIndex = productsArray.findIndex(e=>e.productId === productId)
+
+		if (productIndex !== -1){
+			productsArray.splice(productIndex,1)
+		}
+
+		await db.collection("sessions").updateOne({_id: ObjectId(userId)}, {$set: {userProducts: productsArray}})
+
+		res.sendStatus(200)
+
+	// }catch{
+	// 	return res.sendStatus(500)
+	// }
+}
