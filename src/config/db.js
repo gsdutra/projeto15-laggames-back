@@ -11,7 +11,7 @@ try {
   db = mongoClient.db()
   console.log('Banco conectado!')
 } catch (error) {
-  console.log('Erro no server')
+  console.log('Erro no banco')
 }
 
 export default db
